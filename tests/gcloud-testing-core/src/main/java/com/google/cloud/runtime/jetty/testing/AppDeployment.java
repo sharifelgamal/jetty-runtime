@@ -12,6 +12,14 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Accessible AppDeployment information constants.
+ * <p>
+ * Will pull information from the system environment and also the
+ * active project's app.yaml in order to build the server deployed
+ * URI and variables.
+ * </p>
+ */
 public final class AppDeployment {
   public static final String PROJECT_ID;
   public static final String VERSION_ID;

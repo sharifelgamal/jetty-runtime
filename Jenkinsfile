@@ -13,14 +13,18 @@ node {
 
   stage ("Build & Test") {
     withCredentials([[$class: 'FileBinding', credentialsId: 'gcloud-service-account', variable: 'GCLOUDAUTH']]) {
-        sh "gcloud auth activate-service-account --key-file $GCLOUDAUTH"
-        sh "gcloud config set project ${env.PROJECTID}"
-    }
-    withEnv(mvnEnv) {
-      timeout(120) {
-        sh "mvn -B clean install -Dmaven.test.failure.ignore=true"
-        // Report failures in the jenkins UI
-        step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+      sh "gcloud auth activate-service-account --key-file $GCLOUDAUTH"
+      sh "gcloud config set project ${env.PROJECTID}"
+      // Show the projects that this account has access to
+      sh "gcloud projects list"
+      sh "gcloud projects describe ${env.PROJECTID}"
+      // Perform build & test
+      withEnv(mvnEnv) {
+        timeout(120) {
+          sh "mvn -B clean install -Dmaven.test.failure.ignore=true"
+          // Report failures in the jenkins UI
+          step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+        }
       }
     }
   }

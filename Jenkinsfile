@@ -22,8 +22,10 @@ node {
       withEnv(mvnEnv) {
         timeout(120) {
           sh "mvn -B clean install -Dmaven.test.failure.ignore=true"
-          // Report failures in the jenkins UI
+          // Report junit failures in the jenkins UI
           step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+          // Report integration testing failures in the jenkins UI
+          step([$class: 'JUnitResultArchiver', testResults: '**/target/failsafe-reports/TEST-*.xml'])
         }
       }
     }

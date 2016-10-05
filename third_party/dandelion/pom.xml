@@ -329,6 +329,14 @@
                   <skip>true</skip>
                </configuration>
             </plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-deploy-plugin</artifactId>
+               <configuration>
+                 <!-- never deploy this project to a repository -->
+                 <skip>true</skip>
+               </configuration>
+            </plugin>
          </plugins>
       </pluginManagement>
       <plugins>

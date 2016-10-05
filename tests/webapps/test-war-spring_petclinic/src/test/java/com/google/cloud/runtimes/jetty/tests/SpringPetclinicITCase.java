@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.google.cloud.runtime.jetty.testing.AppDeployment;
-import com.google.cloud.runtime.jetty.testing.HttpURLUtil;
+import com.google.cloud.runtime.jetty.testing.HttpUrlUtil;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -17,9 +17,9 @@ public class SpringPetclinicITCase
     @Test
     public void testGet() throws IOException
     {
-        HttpURLConnection http = HttpURLUtil.openTo(AppDeployment.SERVER_URI.resolve("/"));
+        HttpURLConnection http = HttpUrlUtil.openTo(AppDeployment.SERVER_URI.resolve("/"));
         assertThat(http.getResponseCode(), is(200));
-        String responseBody = HttpURLUtil.getResponseBody(http);
+        String responseBody = HttpUrlUtil.getResponseBody(http);
         assertThat(responseBody, containsString("<title>PetClinic :: a Spring Framework demonstration</title>"));
     }
 }

@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import com.google.cloud.runtime.jetty.testing.AppDeployment;
-import com.google.cloud.runtime.jetty.testing.HttpURLUtil;
+import com.google.cloud.runtime.jetty.testing.HttpUrlUtil;
 import com.google.cloud.runtime.jetty.testing.RemoteLog;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class DeploymentITCase
     @Test
     public void testGet() throws IOException
     {
-        HttpURLConnection http = HttpURLUtil.openTo(AppDeployment.SERVER_URI.resolve("/logging"));
+        HttpURLConnection http = HttpUrlUtil.openTo(AppDeployment.SERVER_URI.resolve("/logging"));
         assertThat(http.getResponseCode(), is(200));
         
         // Fetch logging events on server

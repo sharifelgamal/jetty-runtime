@@ -6,7 +6,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import com.google.cloud.runtime.jetty.testing.AppDeployment;
-import com.google.cloud.runtime.jetty.testing.HttpURLUtil;
+import com.google.cloud.runtime.jetty.testing.HttpUrlUtil;
 import com.google.cloud.runtime.jetty.testing.RemoteLog;
 
 import org.junit.Assert;
@@ -53,8 +53,8 @@ public class DeploymentITCase {
   }
 
   private String issueGet(String urlPath) throws IOException {
-    HttpURLConnection http = HttpURLUtil.openTo(AppDeployment.SERVER_URI.resolve(urlPath));
+    HttpURLConnection http = HttpUrlUtil.openTo(AppDeployment.SERVER_URI.resolve(urlPath));
     Assert.assertThat(http.getResponseCode(), is(200));
-    return HttpURLUtil.getResponseBody(http);
+    return HttpUrlUtil.getResponseBody(http);
   }
 }

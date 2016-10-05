@@ -11,7 +11,8 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-public final class HttpURLUtil {
+public final class HttpUrlUtil
+{
   /**
    * Open a new {@link HttpURLConnection} to the provided URI.
    * <p>
@@ -23,7 +24,7 @@ public final class HttpURLUtil {
    * @throws IOException if unable to open the connection
    */
   public static HttpURLConnection openTo(URI uri) throws IOException {
-    System.err.println("HttpURLUtil.openTo(" + uri + ")");
+    System.err.println("HttpUrlUtil.openTo(" + uri + ")");
     HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
     http.setRequestProperty("User-Agent", "jetty-runtime/gcloud-testing-core");
     return http;

@@ -42,6 +42,7 @@
     <module>test-war-slf4j_1.7.20</module>
     <!-- TODO: apache juli -->
     <module>test-war-logging-mixed</module>
+    <module>test-war-spring_petclinic</module>
   </modules>
 
   <dependencyManagement>

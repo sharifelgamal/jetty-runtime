@@ -76,6 +76,13 @@
           <artifactId>jetty-maven-plugin</artifactId>
           <version>9.3.12.v20160915</version>
         </plugin>
+        <plugin>
+          <groupId>com.google.cloud.tools</groupId>
+          <artifactId>appengine-maven-plugin</artifactId>
+          <configuration>
+            <dockerDirectory>${project.build.directory}/docker</dockerDirectory>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>

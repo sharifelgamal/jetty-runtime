@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class DeploymentITCase
+public class Slf4j161ITCase
 {
     @BeforeClass
     public static void isServerUp()
@@ -40,9 +40,9 @@ public class DeploymentITCase
         List<RemoteLog.Entry> logs = RemoteLog.getLogs(AppDeployment.SERVICE_ID, AppDeployment.VERSION_ID);
         
         String[][] types = new String[][]{
-                {Fruit.class.getName(), "log4j"},
-                {Veggie.class.getName(), "commons-logging"},
-                {Meat.class.getName(), "slf4j"}
+                {Fruit.class.getSimpleName(), "log4j"},
+                {Veggie.class.getSimpleName(), "commons-logging"},
+                {Meat.class.getSimpleName(), "slf4j"}
         };
         
         for (int i = 0; i < types.length; i++)
@@ -52,14 +52,14 @@ public class DeploymentITCase
             
             List<String> expectedEntries = new ArrayList<>();
             
-            expectedEntries.add(String.format("[FINE] %s (slf4j-1.5.6) some %s debug", logName, logType));
-            expectedEntries.add(String.format("[INFO] %s (slf4j-1.5.6) some %s info", logName, logType));
-            expectedEntries.add(String.format("[WARNING] %s (slf4j-1.5.6) some %s warning", logName, logType));
+            expectedEntries.add(String.format("[DEBUG] %s - (slf4j-1.6.1) some %s debug", logName, logType));
+            expectedEntries.add(String.format("[INFO ] %s - (slf4j-1.6.1) some %s info", logName, logType));
+            expectedEntries.add(String.format("[WARN ] %s - (slf4j-1.6.1) some %s warning", logName, logType));
             
             RemoteLog.assertHasEntries(logs, expectedEntries);
             
             RemoteLog.Entry entry = RemoteLog.findEntry(logs,
-                    String.format("[SEVERE] %s (slf4j-1.5.6) some %s error", logName, logType));
+                    String.format("[ERROR] %s - (slf4j-1.6.1) some %s error", logName, logType));
             assertThat("Multi-Line Log", entry.getTextPayload(), containsString("java.lang.RuntimeException: Gone Bad"));
             assertThat("Multi-Line Log", entry.getTextPayload(), containsString("at com.google.cloud.runtime.jetty.tests.webapp.LoggingServlet.doGet(LoggingServlet.java"));
         }

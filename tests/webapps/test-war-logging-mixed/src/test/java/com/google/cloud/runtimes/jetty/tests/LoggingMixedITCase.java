@@ -20,7 +20,7 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class DeploymentITCase {
+public class LoggingMixedITCase {
   @BeforeClass
   public static void isServerUp() {
     HttpUrlUtil.waitForServerUp(AppDeployment.SERVER_URI, 5, TimeUnit.MINUTES);

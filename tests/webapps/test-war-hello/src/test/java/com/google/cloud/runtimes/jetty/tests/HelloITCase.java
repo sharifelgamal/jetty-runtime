@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.concurrent.TimeUnit;
 
-public class DeploymentITCase
+public class HelloITCase
 {
     @BeforeClass
     public static void isServerUp()

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class DeploymentITCase
+public class Slf4j1720ITCase
 {
     @BeforeClass
     public static void isServerUp()

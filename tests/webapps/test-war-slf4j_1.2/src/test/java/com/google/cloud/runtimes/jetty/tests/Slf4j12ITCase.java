@@ -8,6 +8,7 @@ import com.google.cloud.runtime.jetty.testing.AppDeployment;
 import com.google.cloud.runtime.jetty.testing.HttpUrlUtil;
 import com.google.cloud.runtime.jetty.testing.RemoteLog;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class DeploymentITCase
+public class Slf4j12ITCase
 {
     @BeforeClass
     public static void isServerUp()
@@ -28,20 +29,24 @@ public class DeploymentITCase
     @Test
     public void testGet() throws IOException
     {
+        // Trigger events
         HttpURLConnection http = HttpUrlUtil.openTo(AppDeployment.SERVER_URI.resolve("/logging"));
-        assertThat(http.getResponseCode(), is(200));
-        
+        Assert.assertThat(http.getResponseCode(), is(200));
+    
         // Fetch logging events on server
         List<RemoteLog.Entry> logs = RemoteLog.getLogs(AppDeployment.SERVICE_ID, AppDeployment.VERSION_ID);
-        
+    
         List<String> expectedEntries = new ArrayList<>();
-        expectedEntries.add("WARNING: LoggingServlet(commons-logging-1.0.3) Nothing is (intentionally) being output by this Servlet");
-        expectedEntries.add("WARNING: LoggingServlet(commons-logging-1.0.3) Slightly warn, with a chance of log events");
-        expectedEntries.add("INFO: LoggingServlet(commons-logging-1.0.3) GET requested");
-
-        RemoteLog.assertHasEntries(logs, expectedEntries);
         
-        RemoteLog.Entry entry = RemoteLog.findEntry(logs, "SEVERE: LoggingServlet(commons-logging-1.0.3) Whoops (intentionally) causing a Throwable");
+        // Results from /logging
+        expectedEntries.add("[DEBUG] LoggingServlet - LoggingServlet(slf4j-1.2) initialized");
+        expectedEntries.add("[INFO ] LoggingServlet - LoggingServlet(slf4j-1.2) GET requested");
+        expectedEntries.add("[WARN ] LoggingServlet - LoggingServlet(slf4j-1.2) Slightly warn, with a chance of log events");
+        expectedEntries.add("[FATAL] LoggingServlet - LoggingServlet(slf4j-1.2) Whoops (intentionally) causing a Throwable");
+        
+        RemoteLog.assertHasEntries(logs, expectedEntries);
+    
+        RemoteLog.Entry entry = RemoteLog.findEntry(logs, "[FATAL] LoggingServlet - LoggingServlet(slf4j-1.2) Whoops (intentionally) causing a Throwable");
         assertThat("Multi-Line Log", entry.getTextPayload(), containsString("java.io.FileNotFoundException: A file cannot be found"));
         assertThat("Multi-Line Log", entry.getTextPayload(), containsString("at com.google.cloud.runtime.jetty.tests.webapp.LoggingServlet.doGet(LoggingServlet.java"));
     }

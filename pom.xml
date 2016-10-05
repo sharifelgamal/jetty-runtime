@@ -85,6 +85,8 @@
     <module>jetty9-base</module>
     <module>jetty9</module>
     <module>tests</module>
+    <module>third_party/dandelion</module>
+    <module>third_party/spring_petclinic</module>
   </modules>
 
   <dependencyManagement>

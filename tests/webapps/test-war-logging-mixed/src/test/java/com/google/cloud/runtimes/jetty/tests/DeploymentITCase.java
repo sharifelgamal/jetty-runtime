@@ -29,7 +29,7 @@ public class DeploymentITCase {
 
     // Fetch logging events on server
     List<RemoteLog.Entry> logs =
-        RemoteLog.getLogs(AppDeployment.MODULE_ID, AppDeployment.VERSION_ID);
+        RemoteLog.getLogs(AppDeployment.SERVICE_ID, AppDeployment.VERSION_ID);
 
     assertHasLogEntry("/dump/", logs, dump);
     assertHasLogEntry("/attr/request/", logs, reqAttr);

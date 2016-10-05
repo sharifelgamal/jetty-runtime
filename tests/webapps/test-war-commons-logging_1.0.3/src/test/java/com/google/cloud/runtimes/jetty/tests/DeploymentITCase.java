@@ -24,7 +24,7 @@ public class DeploymentITCase
         assertThat(http.getResponseCode(), is(200));
         
         // Fetch logging events on server
-        List<RemoteLog.Entry> logs = RemoteLog.getLogs(AppDeployment.MODULE_ID, AppDeployment.VERSION_ID);
+        List<RemoteLog.Entry> logs = RemoteLog.getLogs(AppDeployment.SERVICE_ID, AppDeployment.VERSION_ID);
         
         List<String> expectedEntries = new ArrayList<>();
         expectedEntries.add("WARNING: LoggingServlet(commons-logging-1.0.3) Nothing is (intentionally) being output by this Servlet");

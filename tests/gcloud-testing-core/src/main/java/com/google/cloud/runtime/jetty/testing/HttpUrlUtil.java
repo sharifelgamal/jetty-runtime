@@ -11,8 +11,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-public final class HttpUrlUtil
-{
+public final class HttpUrlUtil {
   /**
    * Open a new {@link HttpURLConnection} to the provided URI.
    * <p>

@@ -25,7 +25,7 @@ public final class HttpUrlUtil {
    * <p>
    * This will attempt a check for server up.
    * If any result other then response code 200 occurs, then
-   * a 500ms delay is performed until the next test.
+   * a 2s delay is performed until the next test.
    * Up to the duration/timeunit specified.
    * </p>
    *
@@ -41,11 +41,13 @@ public final class HttpUrlUtil {
       try {
         System.out.print(".");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
-        if (http.getResponseCode() != HttpURLConnection.HTTP_OK) {
-          log.log(Level.FINER, "Waiting 500ms for next attempt");
-          TimeUnit.MILLISECONDS.sleep(500);
+        http.setRequestProperty("User-Agent", "jetty-runtime/gcloud-testing-core(server-up)");
+        int statusCode = http.getResponseCode();
+        if (statusCode != HttpURLConnection.HTTP_OK) {
+          log.log(Level.FINER, "Waiting 2s for next attempt");
+          TimeUnit.SECONDS.sleep(2);
         } else {
-          waiting = true;
+          waiting = false;
         }
       } catch (MalformedURLException e) {
         Assert.fail("Invalid URI: " + uri.toString());

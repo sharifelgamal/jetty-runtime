@@ -8,15 +8,23 @@ import com.google.cloud.runtime.jetty.testing.AppDeployment;
 import com.google.cloud.runtime.jetty.testing.HttpUrlUtil;
 import com.google.cloud.runtime.jetty.testing.RemoteLog;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Test;
+import java.util.concurrent.TimeUnit;
 
 public class DeploymentITCase
 {
+    @BeforeClass
+    public static void isServerUp()
+    {
+        HttpUrlUtil.waitForServerUp(AppDeployment.SERVER_URI, 5, TimeUnit.MINUTES);
+    }
+
     @Test
     public void testGet() throws IOException
     {
@@ -30,7 +38,7 @@ public class DeploymentITCase
         expectedEntries.add("WARNING: LoggingServlet(commons-logging-1.0.3) Nothing is (intentionally) being output by this Servlet");
         expectedEntries.add("WARNING: LoggingServlet(commons-logging-1.0.3) Slightly warn, with a chance of log events");
         expectedEntries.add("INFO: LoggingServlet(commons-logging-1.0.3) GET requested");
-        
+
         RemoteLog.assertHasEntries(logs, expectedEntries);
         
         RemoteLog.Entry entry = RemoteLog.findEntry(logs, "SEVERE: LoggingServlet(commons-logging-1.0.3) Whoops (intentionally) causing a Throwable");

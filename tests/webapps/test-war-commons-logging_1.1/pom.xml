@@ -6,7 +6,7 @@
     <artifactId>tests-webapps-parent</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>test-war-commons_logging_1.1</artifactId>
+  <artifactId>test-war-commons-logging_1.1</artifactId>
   <name>Jetty :: Logging Test War :: Commons Logging 1.1</name>
   <packaging>war</packaging>
   <dependencies>

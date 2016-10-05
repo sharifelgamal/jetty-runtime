@@ -8,16 +8,24 @@ import com.google.cloud.runtime.jetty.testing.AppDeployment;
 import com.google.cloud.runtime.jetty.testing.HttpUrlUtil;
 import com.google.cloud.runtime.jetty.testing.RemoteLog;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.concurrent.TimeUnit;
 
 public class DeploymentITCase
 {
+    @BeforeClass
+    public static void isServerUp()
+    {
+        HttpUrlUtil.waitForServerUp(AppDeployment.SERVER_URI, 5, TimeUnit.MINUTES);
+    }
+
     @Test
     public void testGet() throws IOException
     {

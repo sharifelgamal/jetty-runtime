@@ -11,16 +11,24 @@ import com.google.cloud.runtime.jetty.tests.webapp.Fruit;
 import com.google.cloud.runtime.jetty.tests.webapp.Meat;
 import com.google.cloud.runtime.jetty.tests.webapp.Veggie;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.concurrent.TimeUnit;
 
 public class DeploymentITCase
 {
+    @BeforeClass
+    public static void isServerUp()
+    {
+        HttpUrlUtil.waitForServerUp(AppDeployment.SERVER_URI, 5, TimeUnit.MINUTES);
+    }
+
     @Test
     public void testGet() throws IOException
     {

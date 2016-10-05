@@ -44,8 +44,9 @@ public final class AppDeployment {
         Yaml yaml = new Yaml();
         Map map = (Map) yaml.load(reader);
         serviceId = (String) map.get("service");
-        if(serviceId == null)
+        if (serviceId == null) {
           serviceId = (String) map.get("module");
+        }
       } catch (IOException e) {
         throw new RuntimeException("Unable to parse app.yaml", e);
       }

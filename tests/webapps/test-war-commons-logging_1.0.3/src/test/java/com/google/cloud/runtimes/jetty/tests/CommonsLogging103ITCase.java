@@ -25,7 +25,7 @@ public class CommonsLogging103ITCase
         HttpUrlUtil.waitForServerUp(AppDeployment.SERVER_URI, 5, TimeUnit.MINUTES);
     }
 
-    @Test
+    @Test(timeout=1000)
     public void testGet() throws IOException
     {
         HttpURLConnection http = HttpUrlUtil.openTo(AppDeployment.SERVER_URI.resolve("/logging"));

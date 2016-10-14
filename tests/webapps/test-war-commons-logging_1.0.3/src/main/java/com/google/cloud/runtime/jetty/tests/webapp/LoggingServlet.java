@@ -36,6 +36,7 @@ public class LoggingServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        System.out.println("######FOO");
         log.info(LOGID + " GET requested");
 
         log.warn(LOGID + " Slightly warn, with a chance of log events");

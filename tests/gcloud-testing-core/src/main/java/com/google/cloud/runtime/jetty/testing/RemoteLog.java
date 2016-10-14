@@ -5,16 +5,24 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+
 import org.eclipse.jetty.toolchain.test.MavenTestingUtils;
+
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.parser.ParserException;
+import org.yaml.snakeyaml.scanner.ScannerException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -49,13 +57,14 @@ public class RemoteLog {
    */
   public static List<Entry> getLogs(String moduleId, String versionId) throws IOException {
     String filter = String
-        .format("resource.labels.module_id=\"%s\" AND resource.labels.version_id=\"%s\"", moduleId,
-            versionId);
+        .format("resource.labels.module_id=\"%s\" AND resource.labels.version_id=\"%s\"",
+                moduleId, versionId);
 
     List<Entry> entries = new ArrayList<>();
     Path logPath = MavenTestingUtils.getTargetPath("remote-module-version.log");
     try (OutputStream output = Files.newOutputStream(logPath, StandardOpenOption.CREATE)) {
-      int retval = ProcessUtil.exec(output, "gcloud", "beta", "logging", "read", filter);
+      int retval = ProcessUtil.exec(output, "gcloud", "beta", "logging", "read",
+                                    filter, "--freshness=10m");
 
       if (retval != 0) {
         return entries;
@@ -66,15 +75,77 @@ public class RemoteLog {
 
     try (InputStream in = Files.newInputStream(logPath, StandardOpenOption.READ)) {
       Yaml yaml = new Yaml();
-      for (Object yamlObj : yaml.loadAll(in)) {
-        Map yamlMap = (Map) yamlObj;
-        Entry entry = new Entry();
-        entry.logName = (String) yamlMap.get("logName");
-        entry.textPayload = (String) yamlMap.get("textPayload");
-        entry.timeStamp = (String) yamlMap.get("timestamp");
-        entries.add(entry);
+      try {
+        for (Object yamlObj : yaml.loadAll(in)) {
+          try {
+            Map yamlMap = (Map)yamlObj;
+            Entry entry = new Entry();
+            entry.logName = (String)yamlMap.get("logName");
+            entry.textPayload = (String)yamlMap.get("textPayload");
+            entry.timeStamp = (String)yamlMap.get("timestamp");
+            entries.add(entry);
+          }
+          catch (ParserException e) {
+            // bothersome output from cli in yaml terms, toss out what is bad and push to console
+            e.printStackTrace();
+          }
+        }
+      } catch (ScannerException se) {
+        se.printStackTrace();
       }
     }
+
+    return entries;
+  }
+
+  /**
+   * Get the remote logs for the associated module and version.
+   *
+   * @param moduleId the module name
+   * @param versionId the deployed version
+   * @return the list of log entries
+   * @throws IOException if unable to fetch remote log entries
+   */
+  public static List<Entry> getLogsAsJson(String moduleId, String versionId) throws IOException {
+    String filter = String
+            .format("resource.labels.module_id=\"%s\" AND resource.labels.version_id=\"%s\"",
+                    moduleId, versionId);
+
+    List<Entry> entries = new ArrayList<>();
+    Path logPath = MavenTestingUtils.getTargetPath("remote-module-version.log");
+    try (OutputStream output = Files.newOutputStream(logPath, StandardOpenOption.CREATE)) {
+      int retval = ProcessUtil.exec(output, "gcloud", "--format", "json", "beta", "logging", "read",
+                                    filter, "--freshness=10m");
+
+      if (retval != 0) {
+        return entries;
+      }
+    } catch (InterruptedException | ExecutionException e) {
+      throw new IOException("Unable to process gcloud beta logging read", e);
+    }
+
+    try (InputStream in = Files.newInputStream(logPath, StandardOpenOption.READ)) {
+
+      JsonReader jsonReader = new JsonReader(new InputStreamReader(in));
+
+      Gson gson = new Gson();
+
+      List<Object> list = gson.fromJson(jsonReader, List.class);
+
+      for (Iterator<Object> gi = list.iterator(); gi.hasNext();) {
+        Map map = (Map)gi.next();
+
+        if ( map.containsKey("textPayload")) {
+          Entry entry = new Entry();
+
+          entry.logName = (String)map.get("logName");
+          entry.textPayload = (String)map.get("textPayload");
+          entry.timeStamp = (String)map.get("timestamp");
+          entries.add(entry);
+        }
+      }
+    }
+
     return entries;
   }
 
@@ -103,10 +174,12 @@ public class RemoteLog {
       if (expected.isEmpty()) {
         return; // all good!
       }
+
       ListIterator<String> expectedIter = expected.listIterator();
       while (expectedIter.hasNext()) {
         String expectedText = expectedIter.next();
-        if (entry.textPayload.contains(expectedText)) {
+
+        if (entry.textPayload != null && entry.textPayload.contains(expectedText)) {
           expectedIter.remove();
         }
       }

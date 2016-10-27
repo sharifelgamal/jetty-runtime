@@ -35,7 +35,7 @@ RUN mv /usr/local/jetty-distribution-* $JETTY_HOME \
 ENV JETTY_BASE /var/lib/jetty
 ADD jetty-base $JETTY_BASE
 WORKDIR $JETTY_BASE
-RUN java -jar $JETTY_HOME/start.jar --add-to-startd=setuid \
+RUN java -jar $JETTY_HOME/start.jar --approve-all-licenses --add-to-start=setuid,session-store-gcloud,session-store-cache,slf4j-jul \
  && chown -R jetty:jetty $JETTY_BASE \
  && mkdir /tmp/jetty && chown -R jetty:jetty /tmp/jetty \
  && ln -s $JETTY_BASE/webapps/root /app

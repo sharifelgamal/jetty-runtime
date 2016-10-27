@@ -15,6 +15,22 @@ if [ -e "$WEBAPP_WAR" ]; then
   fi
 fi
 
+# Remove unwanted session managers
+case "${SESSIONS:=local}" in
+  memcached-datastore)
+           ;;
+  datastore)
+           rm -f $JETTY_BASE/start.d/session-store-cache.ini
+           ;;
+  *)
+           rm -f $JETTY_BASE/start.d/session-store-cache.ini
+           rm -f $JETTY_BASE/start.d/session-store-gcloud.ini
+           rm -f $JETTY_BASE/start.d/slf4j-api.ini
+           rm -f $JETTY_BASE/start.d/jcl-slf4j.ini
+           rm -f $JETTY_BASE/start.d/slf4j-simple.ini
+           ;;
+esac
+
 # If the passed arguments start with the java command
 if [ "java" = "$1" -o "$(which java)" = "$1" ] ; then
   # ignore the java command as it is the default

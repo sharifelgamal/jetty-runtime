@@ -22,15 +22,20 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 
+import java.util.Arrays;
+
 public class DeploymentCheck extends AbstractLifeCycle.AbstractLifeCycleListener {
   @Override
   public void lifeCycleStarted(LifeCycle bean) {
     if (bean instanceof Server) {
       Server server = (Server)bean;
       Connector[] connectors = server.getConnectors();
-      if (connectors.length == 0 || !connectors[0].isStarted()) {
+      if (connectors == null || connectors.length == 0) {
         server.dumpStdErr();
-        throw new IllegalStateException("No Started Connector");
+        throw new IllegalStateException("No Connector");
+      } else if (!Arrays.stream(connectors).allMatch(Connector::isStarted)) {
+        server.dumpStdErr();
+        throw new IllegalStateException("Connector not started");
       }
       ContextHandler context = server.getChildHandlerByClass(ContextHandler.class);
       if (context == null || !context.isAvailable()) {

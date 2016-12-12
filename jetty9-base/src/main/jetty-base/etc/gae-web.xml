@@ -2,7 +2,7 @@
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
 
-  <!-- Throw Exception on Start -->
+  <!-- Allow start exceptions to propagate -->
   <Set name="throwUnavailableOnStartupException">true</Set>
 
   <!-- Protect app.yaml -->
